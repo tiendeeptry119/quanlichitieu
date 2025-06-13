@@ -7,9 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
-// Trang chủ → redirect về quản lý giao dịch
 Route::get('/', function () {
-    return redirect()->route('products.index');
+    return 'Laravel OK trên Render 🚀';
 });
 
 // Trang dashboard (nếu có)
