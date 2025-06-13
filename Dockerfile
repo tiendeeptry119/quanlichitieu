@@ -66,5 +66,7 @@ WORKDIR /var/www/html
 
 # Cài package Laravel
 RUN composer install --no-dev --optimize-autoloader
+# Migrate database khi container được build (trên Render)
+RUN php artisan migrate --force
 
 EXPOSE 80
