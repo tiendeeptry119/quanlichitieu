@@ -68,6 +68,7 @@
     <!-- Main content -->
     <main class="container py-4">
         @yield('content')
+         @stack('scripts') 
     </main>
 
 </body>

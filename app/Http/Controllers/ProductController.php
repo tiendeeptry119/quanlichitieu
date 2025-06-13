@@ -32,15 +32,20 @@ class ProductController extends Controller
         // Tính toán
         $totalIncome = $products->where('type', 'income')->sum('amount');
         $totalExpense = $products->where('type', 'expense')->sum('amount');
-        $balance = $totalIncome - $totalExpense;
 
-        return view('products.index', compact('products', 'totalIncome', 'totalExpense', 'balance'));
+        // ✅ Lấy số dư ban đầu từ user
+        $initialBalance = Auth::user()->initial_balance ?? 0;
+
+        // ✅ Tính tổng số dư hiện tại
+        $balance = $initialBalance + ($totalIncome - $totalExpense);
+
+        return view('products.index', compact('products', 'totalIncome', 'totalExpense', 'balance', 'initialBalance'));
     }
 
     // Form thêm giao dịch
     public function create()
     {
-        $categories = Category::where('user_id', Auth::id())->get(); // Nếu danh mục dùng riêng
+        $categories = Category::where('user_id', Auth::id())->get();
         return view('products.create', compact('categories'));
     }
 
@@ -49,12 +54,14 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'amount' => 'required|numeric',
+            'amount' => 'required', // bỏ numeric vì đã format
             'type' => 'required|in:income,expense',
             'category_id' => 'nullable|exists:categories,id',
             'date' => 'required|date',
         ]);
 
+        // ✅ Làm sạch số tiền trước khi lưu
+        $validated['amount'] = floatval(str_replace(['.', ','], '', $validated['amount']));
         $validated['user_id'] = Auth::id();
 
         Product::create($validated);
@@ -83,11 +90,14 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'amount' => 'required|numeric',
+            'amount' => 'required',
             'type' => 'required|in:income,expense',
             'category_id' => 'nullable|exists:categories,id',
             'date' => 'required|date',
         ]);
+
+        // ✅ Làm sạch số tiền
+        $validated['amount'] = floatval(str_replace(['.', ','], '', $validated['amount']));
 
         $product->update($validated);
 
