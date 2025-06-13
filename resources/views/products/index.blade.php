@@ -170,4 +170,7 @@
   });
 </script>
 </body>
+<p class="text-center text-muted small mt-5">
+    © Nocopyright • Built by <strong>Phạm Trần Tiến</strong> ✌️
+</p>
 </html>
